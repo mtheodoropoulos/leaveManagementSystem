@@ -1,0 +1,39 @@
+{
+    "name": "mixalis/theodoropo",
+    "type": "project",
+    "description": "Leave management system",
+    "keywords": [
+        "leave"
+    ],
+    "license": "MIT",
+    "require": {
+        "php": "^8.1",
+        "illuminate/container": "^11.24",
+        "illuminate/http": "^11.24",
+        "illuminate/view": "^11.25",
+        "jenssegers/blade": "^2.0",
+        "illuminate/database": "^11.25",
+        "vlucas/phpdotenv": "^5.6",
+        "illuminate/events": "^11.25",
+        "illuminate/routing": "^11.25",
+        "illuminate/session": "^11.25",
+        "illuminate/filesystem": "^11.25"
+    }
+    ,
+    "require-dev": {
+        "roave/security-advisories": "dev-latest"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "platform-check": false
+}
