@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-require 'vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\ConnectionResolverInterface;
@@ -13,31 +13,29 @@ use Illuminate\Filesystem\Filesystem;
 $capsule = new Capsule;
 
 $capsule->addConnection([
-    'driver' => 'mysql',
-//    'host' => '127.0.0.1', // Adjust as needed
-    'host' => 'laravel-mysql', // Adjust as needed
-    'database' => 'db_main',
-    'username' => 'mixalis',
-    'password' => 'theodoropo',
-    'charset' => 'utf8',
+    'driver'    => 'mysql',
+//    'host' => '127.0.0.1',
+    'host'      => 'laravel-mysql',
+    'database'  => 'db_main',
+    'username'  => 'mixalis',
+    'password'  => 'theodoropo',
+    'charset'   => 'utf8',
     'collation' => 'utf8_unicode_ci',
-    'prefix' => '',
+    'prefix'    => '',
 ]);
 
-// Make this Capsule instance available globally
 $capsule->setAsGlobal();
 $capsule->bootEloquent();
 
-
 $connectionResolver = new class($capsule) implements ConnectionResolverInterface{
-    protected $capsule;
+    protected Capsule $capsule;
 
     public function __construct($capsule)
     {
         $this->capsule = $capsule;
     }
 
-    public function connection($name = null)
+    public function connection($name = null): \Illuminate\Database\Connection
     {
         return $this->capsule->getConnection();
     }
@@ -47,20 +45,22 @@ $connectionResolver = new class($capsule) implements ConnectionResolverInterface
         return $this->capsule->getDefaultConnection();
     }
 
-    public function setDefaultConnection($name)
+    public function setDefaultConnection($name): void
     {
     }
 };
 
-// Step 3: Set up migration repository
 $repository = new DatabaseMigrationRepository($connectionResolver, 'migrations');
 
-// Step 4: Check if the migrations table exists, create it if not
 if (!$repository->repositoryExists()) {
     $repository->createRepository();
 }
 
-require 'database/migrations/create_users_table.php';
+require '../database/migrations/create_users_table.php';
+require '../database/migrations/create_roles_table.php';
+require '../database/migrations/create_role_user_table.php';
+require '../database/migrations/create_permissions_table.php';
+require '../database/migrations/create_role_permission_table.php';
 
 $migrator = new Migrator($repository, $connectionResolver, new Filesystem());
 

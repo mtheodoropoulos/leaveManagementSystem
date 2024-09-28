@@ -14,3 +14,18 @@ Capsule::schema()->create('users', function (Blueprint $table) {
         $table->timestamps();
     }
 });
+
+Capsule::schema()->create('employees', static function (Blueprint $table) {
+    if (!Capsule::schema()->hasTable('employees')) {
+        $table->id();
+        $table->foreignId('userId')->constrained('users')->onDelete('cascade');
+        $table->integer('employeeCode');
+    }
+});
+
+Capsule::schema()->create('managers', static function (Blueprint $table) {
+    if (!Capsule::schema()->hasTable('managers')) {
+        $table->id();
+        $table->foreignId('userId')->constrained('users')->onDelete('cascade');
+    }
+});
