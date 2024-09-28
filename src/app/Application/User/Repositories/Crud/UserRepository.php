@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use stdClass;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -21,6 +22,15 @@ class UserRepository implements UserRepositoryInterface
     {
         $strategy = DatabaseFactory::create('mysql');
         DatabaseHandler::getInstance($strategy)->connect();
+    }
+
+    public function getUserRole($user): ?stdClass
+    {
+       return  Capsule::table('roles')
+                        ->join('role_user', 'roles.id', '=', 'role_user.role_id')
+                        ->where('role_user.user_id', $user->id)
+                        ->select('roles.name')
+                        ->first();
     }
 
     public function registerUser($name, $email, $password, $nowDateTime): bool
@@ -36,5 +46,18 @@ class UserRepository implements UserRepositoryInterface
         } catch (Exception $e) {
             return false;
         }
+    }
+
+    /**
+     * @return stdClass[]
+     */
+    public function listUsers(): array
+    {
+        return Capsule::table('users')
+                            ->join('role_user', 'users.id', '=', 'role_user.user_id')
+                            ->join('roles', 'role_user.role_id', '=', 'roles.id')
+                            ->where('roles.name', '=', 'employee')
+                            ->select('users.*')
+                            ->get()->toArray();
     }
 }

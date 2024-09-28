@@ -107,8 +107,8 @@ $capsule = new Capsule;
 
 $capsule->addConnection([
     'driver'    => 'mysql',
-//    'host' => '127.0.0.1', // Adjust as needed
-    'host'      => 'laravel-mysql', // Adjust as needed
+//    'host' => '127.0.0.1',
+    'host'      => 'laravel-mysql',
     'database'  => 'db_main',
     'username'  => 'mixalis',
     'password'  => 'theodoropo',
@@ -119,5 +119,6 @@ $capsule->addConnection([
 
 $capsule->setAsGlobal();
 $capsule->bootEloquent();
+
 $seeder = new DatabaseSeeder();
 $seeder->run();

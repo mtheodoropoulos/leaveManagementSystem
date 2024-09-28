@@ -16,7 +16,6 @@ class AuthController extends BaseController
 
     public function __construct(private readonly UserService $userService)
     {
-
     }
 
     public function showLogin(): void
@@ -91,7 +90,12 @@ class AuthController extends BaseController
             session_start();
             $_SESSION['user'] = $user;
 
-            header('Location: /listUsers');
+            $role =  $this->userService->getUserRole($user);
+
+            if ($role && $role->name === "manager") {
+                header('Location: /listUsers');
+            }
+
             exit;
         }
 

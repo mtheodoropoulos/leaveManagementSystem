@@ -23,7 +23,24 @@
         </tr>
         </thead>
         <tbody id="userTableBody">
-        <!-- User rows will be populated here via JavaScript or server-side rendering -->
+        <?php if (!empty($users)): ?>
+            <?php foreach ($users as $user): ?>
+                <tr>
+                    <td><?php echo $user->id; ?></td>
+                    <td><?php echo $user->name; ?></td>
+                    <td><?php echo $user->email; ?></td>
+                    <td><?php echo $user->created_at; ?></td>
+                    <td>
+                        <button class="btn btn-primary btn-sm">Edit</button>
+                        <button class="btn btn-danger btn-sm">Delete</button>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <tr>
+                <td colspan="5" class="text-center">No users found.</td>
+            </tr>
+        <?php endif; ?>
         </tbody>
     </table>
 </div>
