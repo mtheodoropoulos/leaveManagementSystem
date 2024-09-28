@@ -26,6 +26,11 @@ class UserRepository implements UserRepositoryInterface
         DatabaseHandler::getInstance($strategy)->connect();
     }
 
+    public function getUser(stdClass $user): ?stdClass
+    {
+        return Capsule::table('users')->where('id', $user->id)->first();
+    }
+
     public function getUserRole($user): ?stdClass
     {
        return  Capsule::table('roles')
@@ -53,6 +58,11 @@ class UserRepository implements UserRepositoryInterface
                     'role_id' => $roleId,
                     'user_id' => $userId,
                 ],
+            ]);
+
+            Capsule::table('employees')->insert([
+                'userId' => $userId,
+                'employeeCode' => $employeeCode,
             ]);
 
             return true;

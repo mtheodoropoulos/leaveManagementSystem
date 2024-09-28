@@ -8,7 +8,7 @@ use App\Application\Router\RouterStrategyInterface;
 
 class VerifySessionMiddleware
 {
-    public function handle(RouterStrategyInterface $router, callable $next): void
+    public function handle(RouterStrategyInterface $router, array $payload, callable $next): void
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -19,6 +19,6 @@ class VerifySessionMiddleware
             exit();
         }
 
-        $next($router);
+        $next($router, $payload);
     }
 }

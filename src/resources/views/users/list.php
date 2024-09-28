@@ -11,7 +11,8 @@
 </head>
 <body>
 <div class="container mt-5">
-    <h1 class="mt-5"><?php echo $heading; ?></h1>
+    <h1 class="mt-5"><?php echo "Hello " . htmlspecialchars($loggedInUserName, ENT_QUOTES, 'UTF-8'); ?></h1>
+    <h3 class="mt-5"><?php echo htmlspecialchars($heading, ENT_QUOTES, 'UTF-8'); ?></h3>
     <button id="createUserButton" class="btn btn-success mb-3">Create User</button>
 
     <table class="table table-striped">
@@ -28,10 +29,10 @@
         <?php if (!empty($users)): ?>
             <?php foreach ($users as $user): ?>
                 <tr>
-                    <td><?php echo $user->id; ?></td>
-                    <td><?php echo $user->name; ?></td>
-                    <td><?php echo $user->email; ?></td>
-                    <td><?php echo $user->created_at; ?></td>
+                    <td><?php echo htmlspecialchars($user->id, ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td><?php echo htmlspecialchars($user->name, ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td><?php echo htmlspecialchars($user->email, ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td><?php echo htmlspecialchars($user->created_at, ENT_QUOTES, 'UTF-8'); ?></td>
                     <td>
                         <button class="btn btn-primary btn-sm">Edit</button>
                         <button class="btn btn-danger btn-sm">Delete</button>

@@ -7,10 +7,12 @@ namespace App\Application\http\Controllers;
 use App\Application\http\Controllers\Base\BaseController;
 use App\Application\User\Enums\Role;
 use App\Application\User\Services\Crud\UserService;
+use App\Application\Utils\CommonFunctionsUtils;
 use App\Application\View\View;
 use DateTime;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use JetBrains\PhpStorm\NoReturn;
+use Random\RandomException;
 
 class AuthController extends BaseController
 {
@@ -53,6 +55,7 @@ class AuthController extends BaseController
 
     /**
      * @throws \JsonException
+     * @throws RandomException
      */
     #[NoReturn] public function postRegister(array $payload): void
     {
@@ -64,7 +67,9 @@ class AuthController extends BaseController
             $nowDateTime = new DateTime('now');
             $roleName    = Role::Employee;
 
-            $result = $this->userService->registerUser($name, $email, $password, "1234567", $nowDateTime, $roleName);
+            $sevenDigitNumber = (string)CommonFunctionsUtils::generateRandom7DigitNumber();
+
+            $result = $this->userService->createUser($name, $email, $password, $sevenDigitNumber, $nowDateTime, $roleName);
 
             if ($result) {
                 http_response_code(200);

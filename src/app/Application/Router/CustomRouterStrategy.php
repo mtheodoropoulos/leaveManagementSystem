@@ -71,18 +71,19 @@ class CustomRouterStrategy implements RouterStrategyInterface
 
     private function handleMiddlewares(array $middlewares, array $route, array $matches, array $payload): void
     {
-        $next = function() use ($route, $matches, $payload) {
+        $next = function($router, $payload) use ($route, $matches) {
             $this->callController($route['controller'], $route['action'], $matches, $payload);
         };
 
         foreach (array_reverse($middlewares) as $middlewareClass) {
             $middleware = new $middlewareClass();
-            $next = static function($router) use ($middleware, $next) {
-                $middleware->handle($router, $next);
+
+            $next = static function($router, $payload) use ($middleware, $next) {
+                $middleware->handle($router, $payload, $next);
             };
         }
 
-        $next($this);
+        $next($this, $payload);
     }
 
     public function callController(string $controller, string $action, array $params, array $payload): void

@@ -8,9 +8,9 @@ use App\Application\Router\RouterStrategyInterface;
 
 class VerifyCsrfMiddleware
 {
-    public function handle(RouterStrategyInterface $router, callable $next): void
+    public function handle(RouterStrategyInterface $router, array $payload, callable $next): void
     {
-        $csrfToken = $_POST['csrfToken'] ?? '';
+        $csrfToken = $payload['csrfToken'] ?? '';
 
         if (empty($csrfToken) || !hash_equals($_SESSION['csrfToken'] ?? '', $csrfToken)) {
             http_response_code(403);
@@ -18,6 +18,6 @@ class VerifyCsrfMiddleware
             return;
         }
 
-        $next($router);
+        $next($router, $payload);
     }
 }
