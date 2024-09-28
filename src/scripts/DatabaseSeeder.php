@@ -102,6 +102,7 @@ class DatabaseSeeder
         echo "Assigned role '{$roleName}' to user with ID {$userId}.\n";
     }
 }
+
 $capsule = new Capsule;
 
 $capsule->addConnection([

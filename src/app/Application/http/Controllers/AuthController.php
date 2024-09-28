@@ -90,6 +90,7 @@ class AuthController extends BaseController
         if ($user && password_verify($password, $user->password)) {
             session_start();
             $_SESSION['user'] = $user;
+
             header('Location: /listUsers');
             exit;
         }

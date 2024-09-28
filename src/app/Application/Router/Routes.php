@@ -14,12 +14,6 @@ class Routes
         return [
             [
                 'method'     => 'get',
-                'path'       => '/',
-                'controller' => AuthController::class,
-                'action'     => 'showRegister'
-            ],
-            [
-                'method'     => 'get',
                 'path'       => '/register',
                 'controller' => AuthController::class,
                 'action'     => 'showRegister'
