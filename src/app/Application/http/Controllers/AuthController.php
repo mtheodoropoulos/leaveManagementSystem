@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App\Application\http\Controllers;
 
 use App\Application\http\Controllers\Base\BaseController;
+use App\Application\User\Enums\Role;
 use App\Application\User\Services\Crud\UserService;
 use App\Application\View\View;
 use DateTime;
@@ -61,8 +62,9 @@ class AuthController extends BaseController
             $password    = $payload['password'];
             $password    = password_hash($password, PASSWORD_DEFAULT);
             $nowDateTime = new DateTime('now');
+            $roleName    = Role::Employee;
 
-            $result = $this->userService->registerUser($name, $email, $password, $nowDateTime);
+            $result = $this->userService->registerUser($name, $email, $password, "1234567", $nowDateTime, $roleName);
 
             if ($result) {
                 http_response_code(200);

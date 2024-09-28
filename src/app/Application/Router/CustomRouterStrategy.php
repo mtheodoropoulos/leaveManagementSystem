@@ -24,7 +24,7 @@ class CustomRouterStrategy implements RouterStrategyInterface
         return self::$router;
     }
 
-    public function add(string $method, string $path, string $controller, string $action, ?string $middleware): void
+    public function add(string $method, string $path, string $controller, string $action, ?array $middleware): void
     {
         $path           = preg_replace('/{([\w]+)}/', '(?P<\1>[\w-]+)', $path);
         $this->routes[] = [
@@ -51,17 +51,14 @@ class CustomRouterStrategy implements RouterStrategyInterface
 
         foreach ($this->routes as $route) {
             if ($route['method'] === strtoupper($method) && preg_match($route['path'], $uri, $matches)) {
-                if (isset($route['middleware'])) {
-                    $middleware = new $route['middleware'];
-                    $middleware->handle($this, function ($nextRequest) use ($route, $matches) {
-                        $payload = $this->getPostPayload();
-                        $this->callController($route['controller'], $route['action'], $matches, $payload);
-                    });
+                $payload = $this->getPostPayload();
 
+                if (isset($route['middleware'])) {
+                    $middlewares = $route['middleware'];
+                    $this->handleMiddlewares($middlewares, $route, $matches, $payload);
                     return;
                 }
 
-                $payload = $this->getPostPayload();
                 $this->callController($route['controller'], $route['action'], $matches, $payload);
 
                 return;
@@ -70,6 +67,22 @@ class CustomRouterStrategy implements RouterStrategyInterface
 
         http_response_code(404);
         echo "404 Not Found";
+    }
+
+    private function handleMiddlewares(array $middlewares, array $route, array $matches, array $payload): void
+    {
+        $next = function() use ($route, $matches, $payload) {
+            $this->callController($route['controller'], $route['action'], $matches, $payload);
+        };
+
+        foreach (array_reverse($middlewares) as $middlewareClass) {
+            $middleware = new $middlewareClass();
+            $next = static function($router) use ($middleware, $next) {
+                $middleware->handle($router, $next);
+            };
+        }
+
+        $next($this);
     }
 
     public function callController(string $controller, string $action, array $params, array $payload): void

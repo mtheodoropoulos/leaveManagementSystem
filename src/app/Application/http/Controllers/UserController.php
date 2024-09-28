@@ -49,4 +49,26 @@ class UserController extends BaseController
 
         echo $view->render();
     }
+
+    public function createUser(array $payload): void
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $name        = $payload['name'];
+        $email        = $payload['email'];
+        $password     = $payload['password'];
+        $employeeCode = $payload['employeeCode'];
+
+        $csrfToken             = $this->csrfToken();
+        $_SESSION['csrfToken'] = $csrfToken;
+
+        $view = new View('users/createUser.php', [
+            'csrfToken' => $csrfToken,
+            'heading' => 'Create User',
+        ]);
+
+        echo $view->render();
+    }
 }

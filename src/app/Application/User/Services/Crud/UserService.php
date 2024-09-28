@@ -4,7 +4,9 @@ declare(strict_types = 1);
 
 namespace App\Application\User\Services\Crud;
 
+use App\Application\User\Enums\Role;
 use App\Application\User\Repositories\Crud\UserRepository;
+use DateTime;
 use stdClass;
 
 class UserService implements UserServiceInterface
@@ -18,9 +20,9 @@ class UserService implements UserServiceInterface
         return $this->userRepository->getUserRole($user);
     }
 
-    public function registerUser($name, $email, $password, $nowDateTime): bool
+    public function registerUser(string $name, string $email, string $password, string $employeeCode, DateTime $nowDateTime, Role $roleName): bool
     {
-        return $this->userRepository->registerUser($name, $email, $password, $nowDateTime);
+        return $this->userRepository->createUser($name, $email, $password, $employeeCode, $nowDateTime, $roleName);
     }
 
     /**

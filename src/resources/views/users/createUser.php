@@ -42,32 +42,31 @@
 <script>
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    document.getElementById('createUserForm').addEventListener('submit', function(e) {
-        e.preventDefault();
+    $(document).ready(function() {
+        $('#createUserForm').on('submit', function(e) {
+            e.preventDefault();
 
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const employeeCode = document.getElementById('employeeCode').value;
+            const formData = {
+                name: $('#name').val(),
+                email: $('#email').val(),
+                password: $('#password').val(),
+                employeeCode: $('#employeeCode').val(),
+                csrfToken: csrfToken
+            };
 
-        axios.post('/createUser', {
-            name: name,
-            email: email,
-            password: password,
-            employeeCode: employeeCode
-            csrfToken: csrfToken
-        })
-            .then(function (response) {
-                alert('Registration successful!');
-                window.location.href = '/login';
-            })
-            .catch(function (error) {
-                if (error) {
-                    alert('Error: ' + error.response.data.message);
-                } else {
-                    alert('An unexpected error occurred.');
-                }
-            });
+            axios.post('/createUser', formData)
+                .then(response => {
+                    alert('Create User successfully!');
+                    window.location.href = '/login';
+                })
+                .catch(error => {
+                    if (error) {
+                        alert('Error: ' + error.response.data.message);
+                    } else {
+                        alert('An unexpected error occurred.');
+                    }
+                });
+        });
     });
 </script>
 </body>

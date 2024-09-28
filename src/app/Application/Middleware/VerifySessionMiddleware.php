@@ -4,9 +4,11 @@ declare(strict_types = 1);
 
 namespace App\Application\Middleware;
 
+use App\Application\Router\RouterStrategyInterface;
+
 class VerifySessionMiddleware
 {
-    public function handle($request, $next)
+    public function handle(RouterStrategyInterface $router, callable $next): void
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -17,6 +19,6 @@ class VerifySessionMiddleware
             exit();
         }
 
-        return $next($request);
+        $next($router);
     }
 }

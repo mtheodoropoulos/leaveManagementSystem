@@ -7,6 +7,7 @@ namespace App\Application\User\Repositories\Crud;
 use App\Application\User\Enums\Role;
 use App\Application\Database\DatabaseFactory;
 use App\Application\Database\DatabaseHandler;
+use DateTime;
 use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Psr\Container\ContainerExceptionInterface;
@@ -34,11 +35,10 @@ class UserRepository implements UserRepositoryInterface
                         ->first();
     }
 
-    public function registerUser($name, $email, $password, $nowDateTime): bool
+    public function createUser(string $name, string $email, string $password, string $employeeCode, DateTime $nowDateTime, Role $roleName): bool
     {
         try {
-            $roleName = Role::Employee->value;
-            $roleId   = Capsule::table('roles')->where('name', $roleName)->value('id');
+            $roleId   = Capsule::table('roles')->where('name', $roleName->value)->value('id');
             $userId   = Capsule::table('users')->insertGetId([
                 'name'       => $name,
                 'email'      => $email,
@@ -46,6 +46,7 @@ class UserRepository implements UserRepositoryInterface
                 'created_at' => $nowDateTime,
                 'updated_at' => $nowDateTime
             ]);
+
 
             Capsule::table('role_user')->insert([
                 [

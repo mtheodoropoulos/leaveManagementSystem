@@ -6,6 +6,7 @@ namespace App\Application\Router;
 
 use App\Application\http\Controllers\AuthController;
 use App\Application\http\Controllers\UserController;
+use App\Application\Middleware\VerifyCsrfMiddleware;
 use App\Application\Middleware\VerifySessionMiddleware;
 
 class Routes
@@ -42,13 +43,21 @@ class Routes
                 'path'       => '/listUsers',
                 'controller' => UserController::class,
                 'action'     => 'listUsers',
-                'middleware' => VerifySessionMiddleware::class
+                'middleware' => [VerifySessionMiddleware::class]
             ],
             [
                 'method'     => 'get',
                 'path'       => '/showCreateUser',
                 'controller' => UserController::class,
-                'action'     => 'showCreateUser'
+                'action'     => 'showCreateUser',
+                'middleware' => [VerifySessionMiddleware::class]
+            ],
+            [
+                'method'     => 'post',
+                'path'       => '/createUser',
+                'controller' => UserController::class,
+                'action'     => 'createUser',
+                'middleware' => [VerifySessionMiddleware::class, VerifyCsrfMiddleware::class]
             ],
         ];
     }
