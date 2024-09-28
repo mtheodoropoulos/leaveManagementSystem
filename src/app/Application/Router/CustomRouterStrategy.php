@@ -8,9 +8,9 @@ use Illuminate\Container\Container;
 use ReflectionMethod;
 use RuntimeException;
 
-class Router implements RouterInterface
+class CustomRouterStrategy implements RouterStrategyInterface
 {
-    private static Router $router;
+    private static CustomRouterStrategy $router;
     private array $routes = [];
 
     public static function getRouter(): self
@@ -62,24 +62,6 @@ class Router implements RouterInterface
         echo "404 Not Found";
     }
 
-// Function to get POST payload
-    private function getPostPayload(): array
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Attempt to get JSON payload if content type is application/json
-            if (isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false) {
-                $jsonPayload = file_get_contents('php://input');
-
-                return json_decode($jsonPayload, true) ?? [];
-            }
-
-            // Otherwise, return the regular POST data
-            return $_POST;
-        }
-
-        return [];
-    }
-
     public function callController(string $controller, string $action, array $params, array $payload): void
     {
         $container = Container::getInstance();
@@ -106,5 +88,21 @@ class Router implements RouterInterface
         } else {
             throw new RuntimeException("Controller $controller not found");
         }
+    }
+
+    private function getPostPayload(): array
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Attempt to get JSON payload if content type is application/json
+            if (isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false) {
+                $jsonPayload = file_get_contents('php://input');
+
+                return json_decode($jsonPayload, true) ?? [];
+            }
+
+            return $_POST;
+        }
+
+        return [];
     }
 }

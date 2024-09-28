@@ -54,8 +54,7 @@
                     window.location.href = '/login';
                 })
                 .catch(error => {
-                    if (error.response) {
-                        // Handle validation errors
+                    if (error) {
                         alert('Error: ' + error.response.data.message);
                     } else {
                         alert('An unexpected error occurred.');

@@ -63,12 +63,14 @@ class AuthController extends BaseController
             $password    = password_hash($password, PASSWORD_DEFAULT);
             $nowDateTime = new DateTime('now');
 
-            $result = $this->userService->registerUser($name, $email, $password);
+            $result = $this->userService->registerUser($name, $email, $password, $nowDateTime);
 
             if ($result) {
-                echo json_encode(['message' => 'Registration successful!'], JSON_THROW_ON_ERROR);
+                http_response_code(200);
+                echo json_encode(['message' => 'Registration successful!', "status" => 200], JSON_THROW_ON_ERROR);
             } else {
-                echo json_encode(['message' => 'Registration failed!'], JSON_THROW_ON_ERROR);
+                http_response_code(400);
+                echo json_encode(['message' => 'User does not exist or incorrect password', 'status' => 400], JSON_THROW_ON_ERROR);
             }
         }
 
@@ -90,13 +92,10 @@ class AuthController extends BaseController
             $_SESSION['user'] = $user;
             header('Location: /listUsers');
             exit;
-//            http_response_code(200);
-//            echo json_encode(['message' => 'Login successful!', "status" => 200], JSON_THROW_ON_ERROR);
-//            exit;
         }
 
-        http_response_code(401); // Set HTTP status to 401 Unauthorized
-        echo json_encode(['error' => 'User does not exist or incorrect password', 'status' => 401], JSON_THROW_ON_ERROR);
+        http_response_code(400);
+        echo json_encode(['error' => 'User does not exist or incorrect password', 'status' => 400], JSON_THROW_ON_ERROR);
         exit;
     }
 

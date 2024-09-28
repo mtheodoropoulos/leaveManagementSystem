@@ -6,6 +6,5 @@ namespace App\Application\User\Repositories\Crud;
 
 interface UserRepositoryInterface
 {
-    public function registerUser($name, $email, $password): bool;
-
+    public function registerUser($name, $email, $password, $nowDateTime): bool;
 }

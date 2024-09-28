@@ -4,7 +4,9 @@ declare(strict_types = 1);
 
 namespace App\Application\User\Repositories\Crud;
 
+use App\Application\Database\DatabaseFactory;
 use App\Application\Database\DatabaseHandler;
+use Exception;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -17,15 +19,22 @@ class UserRepository implements UserRepositoryInterface
      */
     public function __construct()
     {
-        DatabaseHandler::getInstance()->connect();
+        $strategy = DatabaseFactory::create('mysql');
+        DatabaseHandler::getInstance($strategy)->connect();
     }
 
-    public function registerUser($name, $email, $password): bool
+    public function registerUser($name, $email, $password, $nowDateTime): bool
     {
-        return Capsule::table('users')->insert([
-            'name'     => $name,
-            'email'    => $email,
-            'password' => $password,
-        ]);
+        try {
+            return Capsule::table('users')->insert([
+                'name'       => $name,
+                'email'      => $email,
+                'password'   => $password,
+                'created_at' => $nowDateTime,
+                'updated_at' => $nowDateTime
+            ]);
+        } catch (Exception $e) {
+            return false;
+        }
     }
 }

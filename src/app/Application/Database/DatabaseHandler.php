@@ -5,37 +5,25 @@ declare(strict_types = 1);
 namespace App\Application\Database;
 
 use Dotenv\Dotenv;
-use Illuminate\Container\Container;
-use Illuminate\Database\Capsule\Manager as Capsule;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 
 class DatabaseHandler
 {
     private string $basePath;
-    private Capsule $capsule;
-    private static DatabaseHandler $databaseHandler;
+    private DatabaseStrategyInterface $strategy;
+    private static ?DatabaseHandler $databaseHandler = null;
 
-    public function __construct(Capsule $capsule)
+    public function __construct(DatabaseStrategyInterface $strategy)
     {
-        $this->capsule  = $capsule;
+        $this->strategy = $strategy;
         $this->basePath = '/var/www/';
         $dotenv         = Dotenv::createImmutable($this->basePath);
         $dotenv->load();
     }
 
-    /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     */
-    public static function getInstance(): self
+    public static function getInstance(DatabaseStrategyInterface $strategy): self
     {
-
-        $databaseHandlerInstance = Container::getInstance()->get(__CLASS__);
-
         if (!isset(self::$databaseHandler)) {
-
-            self::$databaseHandler = $databaseHandlerInstance;
+            self::$databaseHandler = new self($strategy);
         }
 
         return self::$databaseHandler;
@@ -43,18 +31,14 @@ class DatabaseHandler
 
     public function connect(): void
     {
-        $this->capsule->addConnection([
-            'driver'    => $_ENV['DB_CONNECTION'],
-            'host'      => $_ENV['DB_HOST'],
-            'database'  => $_ENV['DB_DATABASE'],
-            'username'  => $_ENV['DB_USERNAME'],
-            'password'  => $_ENV['DB_PASSWORD'],
-            'charset'   => 'utf8',
-            'collation' => 'utf8_unicode_ci',
-            'prefix'    => '',
-        ]);
+        $config = [
+            'DB_CONNECTION' => $_ENV['DB_CONNECTION'],
+            'DB_HOST'       => $_ENV['DB_HOST'],
+            'DB_DATABASE'   => $_ENV['DB_DATABASE'],
+            'DB_USERNAME'   => $_ENV['DB_USERNAME'],
+            'DB_PASSWORD'   => $_ENV['DB_PASSWORD'],
+        ];
 
-        $this->capsule->setAsGlobal();
-        $this->capsule->bootEloquent();
+        $this->strategy->connect($config);
     }
 }
