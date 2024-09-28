@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Application\User\Repositories\Crud;
 
+use App\Application\User\Enums\Role;
 use App\Application\Database\DatabaseFactory;
 use App\Application\Database\DatabaseHandler;
 use Exception;
@@ -36,13 +37,24 @@ class UserRepository implements UserRepositoryInterface
     public function registerUser($name, $email, $password, $nowDateTime): bool
     {
         try {
-            return Capsule::table('users')->insert([
+            $roleName = Role::Employee->value;
+            $roleId   = Capsule::table('roles')->where('name', $roleName)->value('id');
+            $userId   = Capsule::table('users')->insertGetId([
                 'name'       => $name,
                 'email'      => $email,
                 'password'   => $password,
                 'created_at' => $nowDateTime,
                 'updated_at' => $nowDateTime
             ]);
+
+            Capsule::table('role_user')->insert([
+                [
+                    'role_id' => $roleId,
+                    'user_id' => $userId,
+                ],
+            ]);
+
+            return true;
         } catch (Exception $e) {
             return false;
         }

@@ -39,7 +39,7 @@
 <script>
     $(document).ready(function() {
         $('#registerForm').on('submit', function(e) {
-            e.preventDefault(); // Prevent the default form submission
+            e.preventDefault();
 
             const formData = {
                 name: $('#name').val(),

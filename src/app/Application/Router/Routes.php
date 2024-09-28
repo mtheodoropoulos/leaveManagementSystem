@@ -6,6 +6,7 @@ namespace App\Application\Router;
 
 use App\Application\http\Controllers\AuthController;
 use App\Application\http\Controllers\UserController;
+use App\Application\Middleware\VerifySessionMiddleware;
 
 class Routes
 {
@@ -40,7 +41,14 @@ class Routes
                 'method'     => 'get',
                 'path'       => '/listUsers',
                 'controller' => UserController::class,
-                'action'     => 'listUsers'
+                'action'     => 'listUsers',
+                'middleware' => VerifySessionMiddleware::class
+            ],
+            [
+                'method'     => 'get',
+                'path'       => '/showCreateUser',
+                'controller' => UserController::class,
+                'action'     => 'showCreateUser'
             ],
         ];
     }

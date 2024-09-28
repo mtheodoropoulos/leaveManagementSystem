@@ -12,6 +12,8 @@
 <body>
 <div class="container mt-5">
     <h1 class="mt-5"><?php echo $heading; ?></h1>
+    <button id="createUserButton" class="btn btn-success mb-3">Create User</button>
+
     <table class="table table-striped">
         <thead>
         <tr>
@@ -44,5 +46,10 @@
         </tbody>
     </table>
 </div>
+<script>
+    document.getElementById('createUserButton').addEventListener('click', function() {
+        window.location.href = '/showCreateUser';
+    });
+</script>
 </body>
 </html>

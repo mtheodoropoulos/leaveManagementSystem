@@ -24,21 +24,22 @@ class CustomRouterStrategy implements RouterStrategyInterface
         return self::$router;
     }
 
-    public function add(string $method, string $path, string $controller, string $action): void
+    public function add(string $method, string $path, string $controller, string $action, ?string $middleware): void
     {
         $path           = preg_replace('/{([\w]+)}/', '(?P<\1>[\w-]+)', $path);
         $this->routes[] = [
             'method'     => strtoupper($method),
             'path'       => '#^' . $path . '$#',
             'controller' => $controller,
-            'action'     => $action
+            'action'     => $action,
+            'middleware' => $middleware
         ];
     }
 
     public function loadRoutes(array $routes): void
     {
         foreach ($routes as $route) {
-            $this->add($route['method'], $route['path'], $route['controller'], $route['action']);
+            $this->add($route['method'], $route['path'], $route['controller'], $route['action'], $route['middleware'] ?? null);
         }
     }
 
@@ -50,8 +51,17 @@ class CustomRouterStrategy implements RouterStrategyInterface
 
         foreach ($this->routes as $route) {
             if ($route['method'] === strtoupper($method) && preg_match($route['path'], $uri, $matches)) {
-                $payload = $this->getPostPayload();
+                if (isset($route['middleware'])) {
+                    $middleware = new $route['middleware'];
+                    $middleware->handle($this, function ($nextRequest) use ($route, $matches) {
+                        $payload = $this->getPostPayload();
+                        $this->callController($route['controller'], $route['action'], $matches, $payload);
+                    });
 
+                    return;
+                }
+
+                $payload = $this->getPostPayload();
                 $this->callController($route['controller'], $route['action'], $matches, $payload);
 
                 return;
