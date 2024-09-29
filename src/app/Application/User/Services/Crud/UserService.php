@@ -40,7 +40,7 @@ class UserService implements UserServiceInterface
         return $this->userRepository->getUserWithEmployeeCode($userId);
     }
 
-    public function createUser(string $name, string $email, string $password, string $employeeCode, DateTime $nowDateTime, Role $roleName, int $actorId): int
+    public function createUser(string $name, string $email, string $password, string $employeeCode, DateTime $nowDateTime, Role $roleName, ?int $actorId): int
     {
         return $this->userRepository->createUser($name, $email, $password, $employeeCode, $nowDateTime, $roleName, $actorId);
     }

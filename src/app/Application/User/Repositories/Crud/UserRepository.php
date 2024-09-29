@@ -52,7 +52,7 @@ class UserRepository implements UserRepositoryInterface
                       ->select('roles.name')->first();
     }
 
-    public function createUser(string $name, string $email, string $password, string $employeeCode, DateTime $nowDateTime, Role $roleName, int $actorId): int
+    public function createUser(string $name, string $email, string $password, string $employeeCode, DateTime $nowDateTime, Role $roleName, ?int $actorId): int
     {
         try {
             $roleId = Capsule::table('roles')->where('name', $roleName->value)->value('id');

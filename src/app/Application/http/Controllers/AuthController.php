@@ -86,7 +86,7 @@ class AuthController extends BaseController
 
         $sevenDigitNumber = (string)CommonFunctionsUtils::generateRandom7DigitNumber();
 
-        $userId = $this->userService->createUser($name, $email, $password, $sevenDigitNumber, $nowDateTime, $roleName);
+        $userId = $this->userService->createUser($name, $email, $password, $sevenDigitNumber, $nowDateTime, $roleName, null);
 
         if ($userId) {
             http_response_code(200);
