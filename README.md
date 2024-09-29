@@ -20,5 +20,6 @@ cd your-repo
 docker-compose build
 docker-compose up -d
 docker exec -it laravel-php bash
+composer install
 php ./scripts/migrate.php
 php ./scripts/DatabaseSeeder.php
