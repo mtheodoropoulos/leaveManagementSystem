@@ -30,6 +30,16 @@ class UserService implements UserServiceInterface
         return $this->userRepository->createUser($name, $email, $password, $employeeCode, $nowDateTime, $roleName);
     }
 
+    public function updateUser(int $id, string $name, string $email, int $employeeCode, DateTime $nowDateTime): bool
+    {
+        return $this->userRepository->updateUser($id, $name, $email, $employeeCode, $nowDateTime);
+    }
+
+    public function deleteUser(int $id): int
+    {
+        return $this->userRepository->deleteUser($id);
+    }
+
     /**
      * @return stdClass[]
      */

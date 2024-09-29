@@ -59,6 +59,30 @@ class UserRepository implements UserRepositoryInterface
         }
     }
 
+    public function updateUser(int $id, string $name, string $email, int $employeeCode, DateTime $nowDateTime): bool
+    {
+        try {
+            $updated = Capsule::table('users')->where('id', $id)->update([
+                'name'       => $name,
+                'email'      => $email,
+                'updated_at' => $nowDateTime,
+            ]);
+
+            $updatedEmployee = Capsule::table('employees')->where('userId', $id)->update([
+                    'employeeCode' => $employeeCode
+                ]);
+
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    public function deleteUser($id): int
+    {
+        return Capsule::table('users')->where('id', $id)->delete();
+    }
+
     /**
      * @return stdClass[]
      */

@@ -99,5 +99,40 @@ class UserController extends BaseController
         }
     }
 
+    /**
+     * @throws \JsonException
+     */
+    public function updateUser(int $id, array $payload): void
+    {
+        $name = $payload['name'];
+        $email = $payload['email'];
+        $employeeCode = (int)$payload['employeeCode'];
+        $nowDateTime  = new DateTime('now');
 
+        $result = $this->userService->updateUser($id, $name, $email, $employeeCode, $nowDateTime);
+
+        if ($result) {
+            http_response_code(200);
+            echo json_encode(['message' => 'User updated successfully!', 'status' => 200], JSON_THROW_ON_ERROR);
+        } else {
+            http_response_code(400);
+            echo json_encode(['message' => 'Failed to update user', 'status' => 400], JSON_THROW_ON_ERROR);
+        }
+    }
+
+    /**
+     * @throws \JsonException
+     */
+    public function deleteUser(int $id, array $payload): void
+    {
+        $result = $this->userService->deleteUser($id);
+
+        if ($result) {
+            http_response_code(200);
+            echo json_encode(['message' => 'User deleted successfully', 'status' => 200], JSON_THROW_ON_ERROR);
+        } else {
+            http_response_code(404);
+            echo json_encode(['message' => 'User not found', 'status' => 404], JSON_THROW_ON_ERROR);
+        }
+    }
 }

@@ -50,7 +50,7 @@
                     <td><?php echo htmlspecialchars($user->created_at, ENT_QUOTES, 'UTF-8'); ?></td>
                     <td>
                         <button class="btn btn-primary btn-sm editButton" data-id="<?php echo htmlspecialchars($user->id, ENT_QUOTES, 'UTF-8'); ?>">Edit</button>
-                        <button class="btn btn-danger btn-sm">Delete</button>
+                        <button class="btn btn-danger btn-sm deleteButton" data-id="<?php echo htmlspecialchars($user->id, ENT_QUOTES, 'UTF-8'); ?>">Delete</button>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -89,6 +89,31 @@
         button.addEventListener('click', function() {
             const userId = this.getAttribute('data-id');
             window.location.href = `/editUser/${userId}`;
+        });
+    });
+
+    document.querySelectorAll('.deleteButton').forEach(button => {
+        button.addEventListener('click', function() {
+            const userId = this.getAttribute('data-id');
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            const formData = {
+                userId: userId,
+                csrfToken: csrfToken
+            };
+
+            axios.post(`/deleteUser/${userId}`, formData)
+                .then(response => {
+                    alert('User deleted successfully!');
+                    window.location.reload();
+                })
+                .catch(error => {
+                    if (error.response && error.response.data && error.response.data.message) {
+                        alert('Error: ' + error.response.data.message);
+                    } else {
+                        alert('An unexpected error occurred.');
+                    }
+                });
         });
     });
 </script>

@@ -75,6 +75,20 @@ class Routes
                 'action'     => 'editUser',
                 'middleware' => [VerifySessionMiddleware::class]
             ],
+            [
+                'method'     => 'post',
+                'path'       => '/updateUser/{id}',
+                'controller' => UserController::class,
+                'action'     => 'updateUser',
+                'middleware' => [VerifySessionMiddleware::class]
+            ],
+            [
+                'method'     => 'post',
+                'path'       => '/deleteUser/{id}',
+                'controller' => UserController::class,
+                'action'     => 'deleteUser',
+                'middleware' => [VerifySessionMiddleware::class, VerifyCsrfMiddleware::class]
+            ],
         ];
     }
 }

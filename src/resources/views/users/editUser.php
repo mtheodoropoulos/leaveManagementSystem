@@ -46,7 +46,7 @@
             .then(function(response) {
                 if (response.status === 200) {
                     alert('User updated successfully!');
-                    window.location.href = '/users'; // Redirect to user list page after success
+                    window.location.href = '/listUsers';
                 }
             })
             .catch(function(error) {
