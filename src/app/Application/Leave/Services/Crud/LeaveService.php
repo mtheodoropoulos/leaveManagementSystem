@@ -28,7 +28,7 @@ readonly class LeaveService implements LeaveServiceInterface
     /**
      * @throws UserNotEmployeeException
      */
-    public function createLeave(int $userId, string $dateFrom, string $dateTo, string $reason, DateTime $nowDateTime): bool
+    public function createLeave(int $userId, string $dateFrom, string $dateTo, string $reason, DateTime $nowDateTime): int
     {
         return $this->leaveRepository->createLeave($userId, $dateFrom, $dateTo, $reason, $nowDateTime);
     }
@@ -36,6 +36,16 @@ readonly class LeaveService implements LeaveServiceInterface
     public function updateLeave(int $leaveId, string $dateFrom, string $dateTo, string $reason, DateTime $nowDateTime): bool
     {
         return $this->leaveRepository->updateLeave($leaveId, $dateFrom, $dateTo, $reason, $nowDateTime);
+    }
+
+    public function approveLeave(int $leaveId, DateTime $nowDateTime, int $managerId): bool
+    {
+        return $this->leaveRepository->approveLeave($leaveId, $nowDateTime, $managerId);
+    }
+
+    public function rejectLeave(int $leaveId, DateTime $nowDateTime, int $managerId): bool
+    {
+        return $this->leaveRepository->rejectLeave($leaveId, $nowDateTime, $managerId);
     }
 
     public function deleteLeave(int $id): int

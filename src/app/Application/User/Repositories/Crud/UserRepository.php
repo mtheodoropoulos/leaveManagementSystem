@@ -35,6 +35,15 @@ class UserRepository implements UserRepositoryInterface
                        ->first();
     }
 
+    public function getUserWithCreatedBy(int $userId): ?stdClass
+    {
+        return Capsule::table('users')
+                       ->join('employees', 'users.id', '=', 'employees.userId')
+                       ->select('employees.created_by')
+                       ->where('users.id', $userId)
+                       ->first();
+    }
+
     public function getUserRole($user): ?stdClass
     {
         return Capsule::table('roles')
@@ -43,7 +52,7 @@ class UserRepository implements UserRepositoryInterface
                       ->select('roles.name')->first();
     }
 
-    public function createUser(string $name, string $email, string $password, string $employeeCode, DateTime $nowDateTime, Role $roleName): int
+    public function createUser(string $name, string $email, string $password, string $employeeCode, DateTime $nowDateTime, Role $roleName, int $actorId): int
     {
         try {
             $roleId = Capsule::table('roles')->where('name', $roleName->value)->value('id');
@@ -65,6 +74,7 @@ class UserRepository implements UserRepositoryInterface
             Capsule::table('employees')->insert([
                 'userId'       => $userId,
                 'employeeCode' => $employeeCode,
+                'created_by'   => $actorId,
             ]);
 
             return $userId;

@@ -9,5 +9,5 @@ use DateTime;
 
 interface UserServiceInterface
 {
-    public function createUser(string $name, string $email, string $password, string $employeeCode, DateTime $nowDateTime, Role $roleName): int;
+    public function createUser(string $name, string $email, string $password, string $employeeCode, DateTime $nowDateTime, Role $roleName, int $actorId): int;
 }

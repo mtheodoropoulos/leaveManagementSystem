@@ -30,14 +30,19 @@ class UserService implements UserServiceInterface
         return $this->userRepository->getUserByEmail($email);
     }
 
+    public function getUserWithCreatedBy(int $userId): ?stdClass
+    {
+        return $this->userRepository->getUserWithCreatedBy($userId);
+    }
+
     public function getUserWithEmployeeCode(int $userId): ?stdClass
     {
         return $this->userRepository->getUserWithEmployeeCode($userId);
     }
 
-    public function createUser(string $name, string $email, string $password, string $employeeCode, DateTime $nowDateTime, Role $roleName): int
+    public function createUser(string $name, string $email, string $password, string $employeeCode, DateTime $nowDateTime, Role $roleName, int $actorId): int
     {
-        return $this->userRepository->createUser($name, $email, $password, $employeeCode, $nowDateTime, $roleName);
+        return $this->userRepository->createUser($name, $email, $password, $employeeCode, $nowDateTime, $roleName, $actorId);
     }
 
     public function updateUser(int $id, string $name, string $email, int $employeeCode, DateTime $nowDateTime): bool

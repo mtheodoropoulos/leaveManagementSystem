@@ -10,7 +10,10 @@ use App\Application\Leave\Services\Crud\LeaveService;
 use App\Application\User\Services\Crud\UserService;
 use App\Application\View\View;
 use DateTime;
+use Exception;
 use JsonException;
+use PHPMailer\PHPMailer\PHPMailer;
+use stdClass;
 
 class LeaveController extends BaseController
 {
@@ -57,19 +60,131 @@ class LeaveController extends BaseController
      */
     public function createLeave(array $payload): void
     {
-        $dateFrom    = $payload['date_from'];
-        $dateTo      = $payload['date_to'];
-        $reason      = $payload['reason'];
-        $nowDateTime = new DateTime('now');
-        $loggedInUser     = $this->userService->getUser($_SESSION['userId']);
+        $dateFrom              = $payload['date_from'];
+        $dateTo                = $payload['date_to'];
+        $reason                = $payload['reason'];
+        $nowDateTime           = new DateTime('now');
+        $loggedInUser          = $this->userService->getUser($_SESSION['userId']);
+        $csrfToken             = $this->csrfToken();
+        $_SESSION['csrfToken'] = $csrfToken;
+
+        if (!$loggedInUser) {
+            http_response_code(401);
+            echo json_encode(['message' => 'Unauthorized', 'status' => 401], JSON_THROW_ON_ERROR);
+
+            return;
+        }
 
         try {
-            $this->leaveService->createLeave((int)$loggedInUser?->id, $dateFrom, $dateTo, $reason, $nowDateTime);
+            $leaveId = $this->leaveService->createLeave((int)$loggedInUser->id, $dateFrom, $dateTo, $reason, $nowDateTime);
+            $manager    = $this->userService->getUserWithCreatedBy($loggedInUser->id);
+            $managerId  = $manager?->created_by;
+
+            $this->sendLeaveRequestEmail($leaveId, $managerId, $loggedInUser, $dateFrom, $dateTo, $reason, $csrfToken);
+
             http_response_code(200);
             echo json_encode(['message' => 'User created successfully', "status" => 200], JSON_THROW_ON_ERROR);
         } catch (UserNotEmployeeException $e) {
             http_response_code(400);
             echo json_encode(['message' => $e->getMessage(), 'status' => 400], JSON_THROW_ON_ERROR);
+        }
+    }
+
+    private function sendLeaveRequestEmail(int $leaveId, $managerId, stdClass $user, $dateFrom, $dateTo, $reason, $csrfToken): void
+    {
+        $mail = new PHPMailer(true);
+
+        $approvalUrl = "http://localhost/approveLeave/{$leaveId}/manager/$managerId?csrfToken={$csrfToken}";
+        $rejectionUrl = "http://localhost/rejectLeave/{$leaveId}/manager/{$managerId}?csrfToken={$csrfToken}";
+
+        try {
+            $mail->isSMTP();
+            $mail->Host       = 'smtp.mailtrap.io';
+            $mail->SMTPAuth   = true;
+            $mail->Username   = 'f4b178b7c7166f';
+            $mail->Password   = '8378f21bbcae10';
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port       = 587;
+
+            $mail->setFrom('me@example.com', 'Leave Management System');
+            $mail->addAddress('manager@example.com', 'Manager');
+
+            $mail->isHTML(true);
+            $mail->Subject = 'New Leave Request from ' . htmlspecialchars($user->name);
+            $mail->Body    = "
+                <h3>Leave Request Details</h3>
+                <p><strong>Employee:</strong> " . htmlspecialchars($user->name) . "</p>
+                <p><strong>Date From:</strong> $dateFrom</p>
+                <p><strong>Date To:</strong> $dateTo</p>
+                <p><strong>Reason:</strong> $reason</p>
+                <p>Please approve or reject the leave request.</p>
+                <p>
+                    Please <a href='{$approvalUrl}'>click here</a> to approve the leave request.<br>
+                    Or <a href='{$rejectionUrl}'>click here</a> to reject the leave request.
+                </p>
+            ";
+
+            $mail->send();
+        } catch (Exception $e) {
+            error_log("Email could not be sent. Mailer Error: {$mail->ErrorInfo}");
+        }
+    }
+
+    public function approveLeave($id, $managerId): void
+    {
+        $leave       = $this->leaveService->getLeave((int)$id);
+        $nowDateTime = new DateTime('now');
+
+        if (!$leave) {
+            http_response_code(404);
+            echo json_encode(['message' => 'Leave request not found', 'status' => 404], JSON_THROW_ON_ERROR);
+
+            return;
+        }
+
+        if ($leave->status === 'approved') {
+            http_response_code(400);
+            echo json_encode(['message' => 'Leave request is already approved', 'status' => 400], JSON_THROW_ON_ERROR);
+            return;
+        }
+
+        try {
+            $leaveId = $this->leaveService->approveLeave($leave->id, $nowDateTime, (int)$managerId);
+
+            http_response_code(200);
+            echo json_encode(['message' => 'Leave request approved successfully', 'status' => 200], JSON_THROW_ON_ERROR);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['message' => 'An error occurred while approving the leave request', 'status' => 500], JSON_THROW_ON_ERROR);
+        }
+    }
+
+    public function rejectLeave($id, $managerId): void
+    {
+        $leave       = $this->leaveService->getLeave((int)$id);
+        $nowDateTime = new DateTime('now');
+
+        if (!$leave) {
+            http_response_code(404);
+            echo json_encode(['message' => 'Leave request not found', 'status' => 404], JSON_THROW_ON_ERROR);
+
+            return;
+        }
+
+        if ($leave->status === 'rejected') {
+            http_response_code(400);
+            echo json_encode(['message' => 'Leave request is already rejected', 'status' => 400], JSON_THROW_ON_ERROR);
+            return;
+        }
+
+        try {
+            $leaveId = $this->leaveService->rejectLeave($leave->id, $nowDateTime, (int)$managerId);
+
+            http_response_code(200);
+            echo json_encode(['message' => 'Leave request rejected successfully', 'status' => 200], JSON_THROW_ON_ERROR);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['message' => 'An error occurred while rejecting the leave request', 'status' => 500], JSON_THROW_ON_ERROR);
         }
     }
 

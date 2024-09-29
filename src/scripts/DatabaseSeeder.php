@@ -80,8 +80,9 @@ class DatabaseSeeder
                 ]);
             } elseif ($user['role'] === 'employee') {
                 Capsule::table('employees')->insert([
-                    'userId' => $userId,
+                    'userId'       => $userId,
                     'employeeCode' => $user['employeeCode'],
+                    'created_by'   => null,
                 ]);
             }
 

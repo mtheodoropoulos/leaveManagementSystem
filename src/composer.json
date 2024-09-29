@@ -17,7 +17,8 @@
         "illuminate/events": "^11.25",
         "illuminate/routing": "^11.25",
         "illuminate/session": "^11.25",
-        "illuminate/filesystem": "^11.25"
+        "illuminate/filesystem": "^11.25",
+        "phpmailer/phpmailer": "^6.9"
     }
     ,
     "require-dev": {

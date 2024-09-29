@@ -56,11 +56,19 @@ class UserController extends BaseController
         $name         = $payload['name'];
         $email        = $payload['email'];
         $password     = $payload['password'];
+        $password     = password_hash($password, PASSWORD_DEFAULT);
         $employeeCode = $payload['employeeCode'];
         $nowDateTime  = new DateTime('now');
         $roleName     = Role::Employee;
+        $loggedInUser = $this->userService->getUser($_SESSION['userId']);
 
-        $result = $this->userService->createUser($name, $email, $password, $employeeCode, $nowDateTime, $roleName);
+        if (!$loggedInUser) {
+            http_response_code(401);
+            echo json_encode(['message' => 'Unauthorized', 'status' => 401], JSON_THROW_ON_ERROR);
+            return;
+        }
+
+        $result = $this->userService->createUser($name, $email, $password, $employeeCode, $nowDateTime, $roleName, $loggedInUser->id);
 
         if ($result) {
             http_response_code(200);

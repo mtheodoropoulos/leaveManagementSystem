@@ -39,7 +39,7 @@ class LeaveRepository implements LeaveRepositoryInterface
     /**
      * @throws UserNotEmployeeException
      */
-    public function createLeave(int $userId, string $dateFrom, string $dateTo, string $reason, DateTime $nowDateTime): bool
+    public function createLeave(int $userId, string $dateFrom, string $dateTo, string $reason, DateTime $nowDateTime): int
     {
         $employee = Capsule::table('employees')->where('userId', $userId)->first();
 
@@ -47,7 +47,7 @@ class LeaveRepository implements LeaveRepositoryInterface
             throw new UserNotEmployeeException($userId);
         }
 
-        return Capsule::table('leaves')->insert([
+        return Capsule::table('leaves')->insertGetId([
             'userId'         => $userId,
             'date_requested' => $nowDateTime,
             'date_approved'  => null,
@@ -68,6 +68,38 @@ class LeaveRepository implements LeaveRepositoryInterface
                 'date_to'    => $dateTo,
                 'reason'     => $reason,
                 'updated_at' => $nowDateTime,
+            ]);
+
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    public function approveLeave(int $leaveId, DateTime $nowDateTime, int $managerId): bool
+    {
+        try {
+            $updated = Capsule::table('leaves')->where('id', $leaveId)->update([
+                'status'     => "approved",
+                'date_approved'     => $nowDateTime,
+                'updated_at' => $nowDateTime,
+                'approved_by' => $managerId,
+            ]);
+
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    public function rejectLeave(int $leaveId, DateTime $nowDateTime, int $managerId): bool
+    {
+        try {
+            $updated = Capsule::table('leaves')->where('id', $leaveId)->update([
+                'status'        => "rejected",
+                'date_approved' => $nowDateTime,
+                'updated_at'    => $nowDateTime,
+                'approved_by'   => $managerId,
             ]);
 
             return true;

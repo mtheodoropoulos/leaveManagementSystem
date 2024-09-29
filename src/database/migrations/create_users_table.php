@@ -20,6 +20,7 @@ if (!Capsule::schema()->hasTable('employees')) {
         $table->id();
         $table->foreignId('userId')->constrained('users')->onDelete('cascade');
         $table->integer('employeeCode');
+        $table->integer('created_by')->nullable();
     });
 }
 

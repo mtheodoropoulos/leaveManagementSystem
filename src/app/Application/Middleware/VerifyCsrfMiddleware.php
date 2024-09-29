@@ -10,7 +10,13 @@ class VerifyCsrfMiddleware
 {
     public function handle(RouterStrategyInterface $router, array $payload, callable $next): void
     {
-        $csrfToken = $payload['csrfToken'] ?? '';
+        if (isset($payload['csrfToken'])) {
+            $csrfToken = $payload['csrfToken'];
+        } elseif (isset($_GET['csrfToken'])) {
+            $csrfToken = $_GET['csrfToken'] ?? '';
+        } else {
+            return;
+        }
 
         if (empty($csrfToken) || !hash_equals($_SESSION['csrfToken'] ?? '', $csrfToken)) {
             http_response_code(403);
