@@ -100,7 +100,7 @@ class AuthController extends BaseController
         }
 
         http_response_code(400);
-        echo json_encode(['error' => 'User does not exist or incorrect password', 'status' => 400], JSON_THROW_ON_ERROR);
+        echo json_encode(['message' => 'User does not exist or incorrect password', 'status' => 400], JSON_THROW_ON_ERROR);
         exit;
     }
 

@@ -23,7 +23,10 @@ class UserRepository implements UserRepositoryInterface
 
     public function getUserRole($user): ?stdClass
     {
-        return Capsule::table('roles')->join('role_user', 'roles.id', '=', 'role_user.role_id')->where('role_user.user_id', $user->id)->select('roles.name')->first();
+        return Capsule::table('roles')
+                      ->join('role_user', 'roles.id', '=', 'role_user.role_id')
+                      ->where('role_user.user_id', $user->id)
+                      ->select('roles.name')->first();
     }
 
     public function createUser(string $name, string $email, string $password, string $employeeCode, DateTime $nowDateTime, Role $roleName): int
@@ -61,7 +64,13 @@ class UserRepository implements UserRepositoryInterface
      */
     public function listUsers(): array
     {
-        return Capsule::table('users')->join('role_user', 'users.id', '=', 'role_user.user_id')->join('roles', 'role_user.role_id', '=', 'roles.id')->where('roles.name', '=', 'employee')
-                      ->select('users.*')->get()->toArray();
+        return Capsule::table('users')
+                      ->join('role_user', 'users.id', '=', 'role_user.user_id')
+                      ->join('roles', 'role_user.role_id', '=', 'roles.id')
+                      ->join('employees', 'users.id', '=', 'employees.userId')
+                      ->where('roles.name', '=', 'employee')
+                      ->select('users.*', 'employees.employeeCode')
+                      ->get()
+                      ->toArray();
     }
 }

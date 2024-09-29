@@ -9,6 +9,7 @@ use App\Application\User\Enums\Role;
 use App\Application\User\Services\Crud\UserService;
 use App\Application\View\View;
 use DateTime;
+use Illuminate\Database\Capsule\Manager as Capsule;
 
 class UserController extends BaseController
 {
@@ -71,4 +72,32 @@ class UserController extends BaseController
             header('Location: /listUsers');
         }
     }
+
+    public function editUser($id): void
+    {
+        $user = Capsule::table('users')
+                       ->join('employees', 'users.id', '=', 'employees.userId')
+                       ->select('users.*', 'employees.employeeCode')
+                       ->where('users.id', $id)
+                       ->first();
+
+        if ($user) {
+            $csrfToken             = $this->csrfToken();
+            $_SESSION['csrfToken'] = $csrfToken;
+            $heading = "Edit User";
+
+            $view = new View('users/editUser.php', [
+                'csrfToken' => $csrfToken,
+                'heading'   => $heading,
+                'user'      => $user,
+            ]);
+
+            echo $view->render();
+        } else {
+            http_response_code(404);
+            echo json_encode(['message' => 'User not found', 'status' => 404]);
+        }
+    }
+
+
 }

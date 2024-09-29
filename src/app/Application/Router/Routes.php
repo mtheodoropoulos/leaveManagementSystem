@@ -68,6 +68,13 @@ class Routes
                 'action'     => 'createUser',
                 'middleware' => [VerifySessionMiddleware::class, VerifyCsrfMiddleware::class]
             ],
+            [
+                'method'     => 'get',
+                'path'       => '/editUser/{id}',
+                'controller' => UserController::class,
+                'action'     => 'editUser',
+                'middleware' => [VerifySessionMiddleware::class]
+            ],
         ];
     }
 }
