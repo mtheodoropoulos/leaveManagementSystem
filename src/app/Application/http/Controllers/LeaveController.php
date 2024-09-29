@@ -7,6 +7,8 @@ namespace App\Application\http\Controllers;
 use App\Application\Exceptions\UserNotEmployeeException;
 use App\Application\http\Controllers\Base\BaseController;
 use App\Application\Leave\Services\Crud\LeaveService;
+use App\Application\Mail\MailerFactory;
+use App\Application\Mail\MailHandler;
 use App\Application\User\Services\Crud\UserService;
 use App\Application\View\View;
 use DateTime;
@@ -92,42 +94,10 @@ class LeaveController extends BaseController
 
     private function sendLeaveRequestEmail(int $leaveId, $managerId, stdClass $user, $dateFrom, $dateTo, $reason, $csrfToken): void
     {
-        $mail = new PHPMailer(true);
 
-        $approvalUrl = "http://localhost/approveLeave/{$leaveId}/manager/$managerId?csrfToken={$csrfToken}";
-        $rejectionUrl = "http://localhost/rejectLeave/{$leaveId}/manager/{$managerId}?csrfToken={$csrfToken}";
-
-        try {
-            $mail->isSMTP();
-            $mail->Host       = 'smtp.mailtrap.io';
-            $mail->SMTPAuth   = true;
-            $mail->Username   = 'f4b178b7c7166f';
-            $mail->Password   = '8378f21bbcae10';
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port       = 587;
-
-            $mail->setFrom('me@example.com', 'Leave Management System');
-            $mail->addAddress('manager@example.com', 'Manager');
-
-            $mail->isHTML(true);
-            $mail->Subject = 'New Leave Request from ' . htmlspecialchars($user->name);
-            $mail->Body    = "
-                <h3>Leave Request Details</h3>
-                <p><strong>Employee:</strong> " . htmlspecialchars($user->name) . "</p>
-                <p><strong>Date From:</strong> $dateFrom</p>
-                <p><strong>Date To:</strong> $dateTo</p>
-                <p><strong>Reason:</strong> $reason</p>
-                <p>Please approve or reject the leave request.</p>
-                <p>
-                    Please <a href='{$approvalUrl}'>click here</a> to approve the leave request.<br>
-                    Or <a href='{$rejectionUrl}'>click here</a> to reject the leave request.
-                </p>
-            ";
-
-            $mail->send();
-        } catch (Exception $e) {
-            error_log("Email could not be sent. Mailer Error: {$mail->ErrorInfo}");
-        }
+        $mailerStrategy = MailerFactory::create('mailgun');
+        $mailerHandler = new MailHandler($mailerStrategy);
+        $mailerHandler->sendEmail($leaveId, $managerId, $user, $dateFrom, $dateTo, $reason, $csrfToken);
     }
 
     public function approveLeave($id, $managerId): void
