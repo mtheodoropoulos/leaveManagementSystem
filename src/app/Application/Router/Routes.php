@@ -24,7 +24,8 @@ class Routes
                 'method'     => 'post',
                 'path'       => '/register',
                 'controller' => AuthController::class,
-                'action'     => 'postRegister'
+                'action'     => 'postRegister',
+                'middleware' => [VerifySessionMiddleware::class, VerifyCsrfMiddleware::class]
             ],
             [
                 'method'     => 'get',

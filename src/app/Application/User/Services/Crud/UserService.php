@@ -15,9 +15,9 @@ class UserService implements UserServiceInterface
     {
     }
 
-    public function getUser(stdClass $user): ?stdClass
+    public function getUser(int $userId): ?stdClass
     {
-        return $this->userRepository->getUser($user);
+        return $this->userRepository->getUser($userId);
     }
 
     public function getUserRole(stdClass $user): ?stdClass
@@ -25,7 +25,7 @@ class UserService implements UserServiceInterface
         return $this->userRepository->getUserRole($user);
     }
 
-    public function createUser(string $name, string $email, string $password, string $employeeCode, DateTime $nowDateTime, Role $roleName): bool
+    public function createUser(string $name, string $email, string $password, string $employeeCode, DateTime $nowDateTime, Role $roleName): int
     {
         return $this->userRepository->createUser($name, $email, $password, $employeeCode, $nowDateTime, $roleName);
     }

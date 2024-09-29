@@ -10,11 +10,7 @@ class VerifySessionMiddleware
 {
     public function handle(RouterStrategyInterface $router, array $payload, callable $next): void
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        if (!isset($_SESSION['user'])) {
+        if (!isset($_SESSION['userId'])) {
             header("Location: /login");
             exit();
         }

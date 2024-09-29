@@ -18,14 +18,10 @@ class UserController extends BaseController
 
     public function listUsers(): void
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
         $csrfToken             = $this->csrfToken();
         $_SESSION['csrfToken'] = $csrfToken;
 
-        $loggedInUser     = $this->userService->getUser($_SESSION['user']);
+        $loggedInUser     = $this->userService->getUser($_SESSION['userId']);
         $users            = $this->userService->listUsers();
         $loggedInUserName = $loggedInUser?->name;
 
@@ -40,10 +36,6 @@ class UserController extends BaseController
 
     public function showCreateUser(): void
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
         $csrfToken             = $this->csrfToken();
         $_SESSION['csrfToken'] = $csrfToken;
 
@@ -60,10 +52,6 @@ class UserController extends BaseController
      */
     public function createUser(array $payload): void
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
         $name         = $payload['name'];
         $email        = $payload['email'];
         $password     = $payload['password'];

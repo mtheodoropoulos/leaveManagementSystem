@@ -23,10 +23,6 @@ class AuthController extends BaseController
 
     public function showLogin(): void
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
         $csrfToken             = $this->csrfToken();
         $_SESSION['csrfToken'] = $csrfToken;
 
@@ -39,10 +35,6 @@ class AuthController extends BaseController
 
     public function showRegister(): void
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
         $csrfToken             = $this->csrfToken();
         $_SESSION['csrfToken'] = $csrfToken;
 
@@ -59,25 +51,25 @@ class AuthController extends BaseController
      */
     #[NoReturn] public function postRegister(array $payload): void
     {
-        if (hash_equals($_SESSION['csrfToken'], $payload['csrfToken'])) {
-            $name        = $payload['name'];
-            $email       = $payload['email'];
-            $password    = $payload['password'];
-            $password    = password_hash($password, PASSWORD_DEFAULT);
-            $nowDateTime = new DateTime('now');
-            $roleName    = Role::Employee;
+        $name        = $payload['name'];
+        $email       = $payload['email'];
+        $password    = $payload['password'];
+        $password    = password_hash($password, PASSWORD_DEFAULT);
+        $nowDateTime = new DateTime('now');
+        $roleName    = Role::Employee;
 
-            $sevenDigitNumber = (string)CommonFunctionsUtils::generateRandom7DigitNumber();
+        $sevenDigitNumber = (string)CommonFunctionsUtils::generateRandom7DigitNumber();
 
-            $result = $this->userService->createUser($name, $email, $password, $sevenDigitNumber, $nowDateTime, $roleName);
+        $userId = $this->userService->createUser($name, $email, $password, $sevenDigitNumber, $nowDateTime, $roleName);
 
-            if ($result) {
-                http_response_code(200);
-                echo json_encode(['message' => 'Registration successful!', "status" => 200], JSON_THROW_ON_ERROR);
-            } else {
-                http_response_code(400);
-                echo json_encode(['message' => 'User does not exist or incorrect password', 'status' => 400], JSON_THROW_ON_ERROR);
-            }
+        if ($userId) {
+            $_SESSION['userId'] = $userId;
+            $_SESSION['$email'] = $email;
+            http_response_code(200);
+            echo json_encode(['message' => 'Registration successful!', "status" => 200], JSON_THROW_ON_ERROR);
+        } else {
+            http_response_code(400);
+            echo json_encode(['message' => 'User does not exist or incorrect password', 'status' => 400], JSON_THROW_ON_ERROR);
         }
 
         exit;
@@ -94,8 +86,8 @@ class AuthController extends BaseController
         $user = Capsule::table('users')->where('email', $email)->first();
 
         if ($user && password_verify($password, $user->password)) {
-            session_start();
-            $_SESSION['user'] = $user;
+            $_SESSION['userId'] = $user->id;
+            $_SESSION['$email'] = $user->email;
 
             $role =  $this->userService->getUserRole($user);
 
