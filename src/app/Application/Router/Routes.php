@@ -89,6 +89,13 @@ class Routes
                 'action'     => 'deleteUser',
                 'middleware' => [VerifySessionMiddleware::class, VerifyCsrfMiddleware::class]
             ],
+            [
+                'method'     => 'get',
+                'path'       => '/listLeaves',
+                'controller' => UserController::class,
+                'action'     => 'listLeaves',
+                'middleware' => [VerifySessionMiddleware::class]
+            ]
         ];
     }
 }

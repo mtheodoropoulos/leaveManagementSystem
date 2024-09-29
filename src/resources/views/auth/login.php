@@ -41,8 +41,13 @@
 
             axios.post('/login', formData)
                 .then(response => {
-                    if(response.status === 200){
-                        window.location.href = '/listUsers';
+                    console.log(response);
+                    if (response.status === 200) {
+                        if (response.data.role === 'manager') {
+                            window.location.href = '/listUsers';
+                        } else if (response.data.role === 'employee') {
+                            window.location.href = '/listLeaves';
+                        }
                     }
                 })
                 .catch(error => {

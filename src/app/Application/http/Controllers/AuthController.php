@@ -26,8 +26,21 @@ class AuthController extends BaseController
         $csrfToken             = $this->csrfToken();
         $_SESSION['csrfToken'] = $csrfToken;
 
-        if ($_SESSION['userId']) {
-            header("Location: /listUsers");
+        if (isset($_SESSION['userId'])) {
+            $user = Capsule::table('users')->where('id', $_SESSION['userId'])->first();
+            $role =  $this->userService->getUserRole($user);
+
+            if ($role && $role->name === "manager") {
+                http_response_code(200);
+                header("Location: /listUsers");
+            } elseif ($role && $role->name === "employee") {
+                http_response_code(200);
+                header("Location: /listLeaves");
+            } else {
+                http_response_code(400);
+                echo json_encode(['message' => 'User does not exist', 'status' => 400], JSON_THROW_ON_ERROR);
+            }
+
             exit();
         }
 
@@ -98,7 +111,13 @@ class AuthController extends BaseController
 
             if ($role && $role->name === "manager") {
                 http_response_code(200);
-                echo json_encode(['message' => 'Logged in successfully', "status" => 200], JSON_THROW_ON_ERROR);
+                echo json_encode(['message' => 'Logged in successfully', "status" => 200, "role" => $role->name], JSON_THROW_ON_ERROR);
+            } elseif ($role && $role->name === "employee") {
+                http_response_code(200);
+                echo json_encode(['message' => 'Logged in successfully', "status" => 200, "role" => $role->name], JSON_THROW_ON_ERROR);
+            } else {
+                http_response_code(400);
+                echo json_encode(['message' => 'User does not exist or incorrect password', 'status' => 400], JSON_THROW_ON_ERROR);
             }
 
             exit;

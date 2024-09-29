@@ -47,4 +47,9 @@ class UserService implements UserServiceInterface
     {
         return $this->userRepository->listUsers();
     }
+
+    public function listLeaves(): array
+    {
+        return $this->userRepository->listLeaves();
+    }
 }

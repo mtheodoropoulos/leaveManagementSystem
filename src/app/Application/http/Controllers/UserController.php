@@ -35,6 +35,25 @@ class UserController extends BaseController
         echo $view->render();
     }
 
+    public function listLeaves(): void
+    {
+        $csrfToken             = $this->csrfToken();
+        $_SESSION['csrfToken'] = $csrfToken;
+
+        $loggedInUser     = $this->userService->getUser($_SESSION['userId']);
+        $loggedInUserName = $loggedInUser?->name;
+        $leaves           = $this->userService->listLeaves();
+
+        $view = new View('leaves/leavesList.php', [
+            'csrfToken'        => $csrfToken,
+            'heading'          => 'Leaves list',
+            'users'            => $leaves,
+            'loggedInUserName' => $loggedInUserName,
+        ]);
+
+        echo $view->render();
+    }
+
     public function showCreateUser(): void
     {
         $csrfToken             = $this->csrfToken();
