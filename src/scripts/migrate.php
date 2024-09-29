@@ -56,12 +56,12 @@ if (!$repository->repositoryExists()) {
     $repository->createRepository();
 }
 
-require '../database/migrations/create_users_table.php';
-require '../database/migrations/create_roles_table.php';
-require '../database/migrations/create_role_user_table.php';
-require '../database/migrations/create_permissions_table.php';
-require '../database/migrations/create_role_permission_table.php';
-require '../database/migrations/create_leaves_table.php';
+require __DIR__ . '/../database/migrations/create_users_table.php';
+require __DIR__ . '/../database/migrations/create_roles_table.php';
+require __DIR__ . '/../database/migrations/create_role_user_table.php';
+require __DIR__ . '/../database/migrations/create_permissions_table.php';
+require __DIR__ . '/../database/migrations/create_role_permission_table.php';
+require __DIR__ . '/../database/migrations/create_leaves_table.php';
 
 $migrator = new Migrator($repository, $connectionResolver, new Filesystem());
 
