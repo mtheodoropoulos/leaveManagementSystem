@@ -25,7 +25,7 @@ class Routes
                 'path'       => '/register',
                 'controller' => AuthController::class,
                 'action'     => 'postRegister',
-                'middleware' => [VerifySessionMiddleware::class, VerifyCsrfMiddleware::class]
+                'middleware' => [VerifyCsrfMiddleware::class]
             ],
             [
                 'method'     => 'get',
@@ -37,7 +37,15 @@ class Routes
                 'method'     => 'post',
                 'path'       => '/login',
                 'controller' => AuthController::class,
-                'action'     => 'postLogin'
+                'action'     => 'postLogin',
+                'middleware' => [VerifyCsrfMiddleware::class]
+            ],
+            [
+                'method'     => 'post',
+                'path'       => '/logout',
+                'controller' => AuthController::class,
+                'action'     => 'logout',
+                'middleware' => [VerifySessionMiddleware::class, VerifyCsrfMiddleware::class]
             ],
             [
                 'method'     => 'get',

@@ -8,11 +8,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <meta name="csrf-token" content=<?php echo $csrfToken; ?>>
+    <style>
+        .logout-btn-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+    </style>
 </head>
 <body>
 <div class="container mt-5">
+    <div class="logout-btn-container">
+        <button id="logoutButton" class="btn btn-danger">Logout</button>
+    </div>
     <h1 class="mt-5"><?php echo "Hello " . htmlspecialchars($loggedInUserName, ENT_QUOTES, 'UTF-8'); ?></h1>
     <h3 class="mt-5"><?php echo htmlspecialchars($heading, ENT_QUOTES, 'UTF-8'); ?></h3>
+
     <button id="createUserButton" class="btn btn-success mb-3">Create User</button>
 
     <table class="table table-striped">
@@ -51,6 +62,26 @@
     document.getElementById('createUserButton').addEventListener('click', function() {
         window.location.href = '/showCreateUser';
     });
+
+    document.getElementById('logoutButton').addEventListener('click', function() {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        const formData = new FormData();
+        formData.append('csrfToken', csrfToken);
+
+        axios.post('/logout', formData)
+            .then(function(response) {
+                if(response.status === 200){
+                    window.location.href = '/login';
+                }
+            })
+            .catch(function(error) {
+                console.error("Logout failed: ", error);
+                alert("Failed to logout.");
+            });
+    });
+
+
 </script>
 </body>
 </html>

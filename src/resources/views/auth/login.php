@@ -41,13 +41,13 @@
             axios.post('/login', formData)
                 .then(response => {
                     if(response.status === 200){
-                        window.location.href = '/listUsers'; // Adjust to your needs
+                        window.location.href = '/listUsers';
                     }
                 })
                 .catch(error => {
                     if(error.response && error.response.status === 401){
-                        alert(error.response.data.error); // Show error message
-                        window.location.href = '/register'; // Redirect to register page
+                        alert(error.response.data.error);
+                        window.location.href = '/register';
                     }
                     else{
                         alert('An unexpected error occurred.');

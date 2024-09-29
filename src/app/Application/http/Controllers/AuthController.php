@@ -92,7 +92,8 @@ class AuthController extends BaseController
             $role =  $this->userService->getUserRole($user);
 
             if ($role && $role->name === "manager") {
-                header('Location: /listUsers');
+                http_response_code(200);
+                echo json_encode(['message' => 'Logged in successfully', "status" => 200], JSON_THROW_ON_ERROR);
             }
 
             exit;
@@ -103,11 +104,12 @@ class AuthController extends BaseController
         exit;
     }
 
-    public function logout()
+    #[NoReturn] public function logout(array $payload): void
     {
         session_start();
         session_destroy();
-        header('Location: /login');
+        http_response_code(200);
+        echo json_encode(['message' => 'Logout successfully', "status" => 200], JSON_THROW_ON_ERROR);
         exit;
     }
 
