@@ -8,34 +8,27 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <meta name="csrf-token" content="<?php echo $csrfToken; ?>">
-    <title>Create User</title>
+    <title>Create Leave Request</title>
 </head>
 <body>
 <div class="container mt-5">
     <h1><?php echo $heading; ?></h1>
-
-    <form id="createUserForm">
+    <form id="createLeaveForm">
         <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" class="form-control" id="name" name="name" placeholder="Enter name" required>
+            <label for="date_from">Date From</label>
+            <input type="date" class="form-control" id="date_from" name="date_from" required>
         </div>
 
         <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" class="form-control" id="email" name="email" placeholder="Enter email" required>
+            <label for="date_to">Date To</label>
+            <input type="date" class="form-control" id="date_to" name="date_to" required>
         </div>
-
         <div class="form-group">
-            <label for="employeeCode">Employee Code</label>
-            <input type="number" class="form-control" id="employeeCode" name="employeeCode" placeholder="Enter employee code" required>
+            <label for="reason">Reason for Leave</label>
+            <textarea class="form-control" id="reason" name="reason" rows="3" placeholder="Enter reason for leave" required></textarea>
         </div>
 
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Create User</button>
+        <button type="submit" class="btn btn-primary">Submit Leave Request</button>
     </form>
 </div>
 
@@ -43,21 +36,20 @@
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
     $(document).ready(function() {
-        $('#createUserForm').on('submit', function(e) {
+        $('#createLeaveForm').on('submit', function(e) {
             e.preventDefault();
 
             const formData = {
-                name: $('#name').val(),
-                email: $('#email').val(),
-                password: $('#password').val(),
-                employeeCode: $('#employeeCode').val(),
+                date_from: $('#date_from').val(),
+                date_to: $('#date_to').val(),
+                reason: $('#reason').val(),
                 csrfToken: csrfToken
             };
 
-            axios.post('/createUser', formData)
+            axios.post('/createLeave', formData)
                 .then(response => {
-                    alert('Create User successfully!');
-                    window.location.href = '/listUsers';
+                    alert('Leave request submitted successfully!');
+                    window.location.href = '/listLeaves';
                 })
                 .catch(error => {
                     if (error.response && error.response.data && error.response.data.message) {

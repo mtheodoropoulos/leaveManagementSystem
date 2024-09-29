@@ -8,7 +8,8 @@ use Illuminate\Database\Schema\Blueprint;
 if (!Capsule::schema()->hasTable('leaves')) {
     Capsule::schema()->create('leaves', function (Blueprint $table) {
         $table->id();
-        $table->foreignId('userId')->constrained('employees')->onDelete('cascade');
+        $table->unsignedBigInteger('userId');
+        $table->foreign('userId')->references('userId')->on('employees')->onDelete('cascade');
         $table->date('date_requested');
         $table->date('date_approved')->nullable();
         $table->string('status');

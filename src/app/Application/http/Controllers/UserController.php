@@ -84,11 +84,9 @@ class UserController extends BaseController
         if ($result) {
             http_response_code(200);
             echo json_encode(['message' => 'User created successfully', "status" => 200], JSON_THROW_ON_ERROR);
-            header('Location: /listUsers');
         } else {
             http_response_code(400);
             echo json_encode(['message' => 'User does not exist or incorrect password', 'status' => 400], JSON_THROW_ON_ERROR);
-            header('Location: /listUsers');
         }
     }
 

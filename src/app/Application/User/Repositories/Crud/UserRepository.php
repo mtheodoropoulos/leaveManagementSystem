@@ -97,19 +97,4 @@ class UserRepository implements UserRepositoryInterface
                       ->get()
                       ->toArray();
     }
-
-    public function listLeaves(): array
-    {
-        return Capsule::table('leaves')
-                      ->join('employees', 'leaves.userId', '=', 'employees.id')
-                      ->join('users', 'employees.userId', '=', 'users.id')
-                      ->select(
-                          'leaves.*',
-                          'users.name as employee_name',
-                          'users.email as employee_email',
-                          'employees.employeeCode'
-                      )
-                      ->get()
-                      ->toArray();
-    }
 }

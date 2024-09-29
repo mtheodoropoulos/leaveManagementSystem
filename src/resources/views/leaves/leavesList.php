@@ -46,12 +46,13 @@
                 <tr>
                     <td><?php echo htmlspecialchars($leave->id, ENT_QUOTES, 'UTF-8'); ?></td>
                     <td><?php echo htmlspecialchars($leave->date_requested, ENT_QUOTES, 'UTF-8'); ?></td>
-                    <td><?php echo htmlspecialchars($leave->date_approved, ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td><?php echo htmlspecialchars($leave->date_approved ?? "", ENT_QUOTES, 'UTF-8'); ?></td>
                     <td><?php echo htmlspecialchars($leave->date_from, ENT_QUOTES, 'UTF-8'); ?></td>
                     <td><?php echo htmlspecialchars($leave->date_to, ENT_QUOTES, 'UTF-8'); ?></td>
                     <td><?php echo htmlspecialchars($leave->status, ENT_QUOTES, 'UTF-8'); ?></td>
                     <td><?php echo htmlspecialchars($leave->reason, ENT_QUOTES, 'UTF-8'); ?></td>
                     <td>
+                        <button class="btn btn-primary btn-sm editLeaveButton" data-id="<?php echo htmlspecialchars($leave->id, ENT_QUOTES, 'UTF-8'); ?>">Edit</button>
                         <button class="btn btn-danger btn-sm deleteLeaveButton" data-id="<?php echo htmlspecialchars($leave->id, ENT_QUOTES, 'UTF-8'); ?>">Delete</button>
                     </td>
                 </tr>
@@ -66,7 +67,7 @@
 </div>
 <script>
     document.getElementById('createLeaveButton').addEventListener('click', function() {
-        window.location.href = '/showCreateLeave'; // Redirect to create leave request page
+        window.location.href = '/showCreateLeave';
     });
 
     document.getElementById('logoutButton').addEventListener('click', function() {
@@ -87,30 +88,10 @@
             });
     });
 
-    document.querySelectorAll('.deleteLeaveButton').forEach(button => {
+    document.querySelectorAll('.editLeaveButton').forEach(button => {
         button.addEventListener('click', function() {
             const leaveId = this.getAttribute('data-id');
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-            const formData = {
-                leaveId: leaveId,
-                csrfToken: csrfToken
-            };
-
-            axios.delete(`/deleteLeave/${leaveId}`, {
-                data: { csrfToken: csrfToken }
-            })
-                .then(response => {
-                    alert('Leave request deleted successfully!');
-                    window.location.reload();
-                })
-                .catch(error => {
-                    if (error.response && error.response.data && error.response.data.message) {
-                        alert('Error: ' + error.response.data.message);
-                    } else {
-                        alert('An unexpected error occurred.');
-                    }
-                });
+            window.location.href = `/editLeave/${leaveId}`;
         });
     });
 </script>

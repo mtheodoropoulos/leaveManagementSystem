@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App\Application\Router;
 
 use App\Application\http\Controllers\AuthController;
+use App\Application\http\Controllers\LeaveController;
 use App\Application\http\Controllers\UserController;
 use App\Application\Middleware\VerifyCsrfMiddleware;
 use App\Application\Middleware\VerifySessionMiddleware;
@@ -80,7 +81,7 @@ class Routes
                 'path'       => '/updateUser/{id}',
                 'controller' => UserController::class,
                 'action'     => 'updateUser',
-                'middleware' => [VerifySessionMiddleware::class]
+                'middleware' => [VerifySessionMiddleware::class, VerifyCsrfMiddleware::class]
             ],
             [
                 'method'     => 'delete',
@@ -92,9 +93,37 @@ class Routes
             [
                 'method'     => 'get',
                 'path'       => '/listLeaves',
-                'controller' => UserController::class,
+                'controller' => LeaveController::class,
                 'action'     => 'listLeaves',
                 'middleware' => [VerifySessionMiddleware::class]
+            ],
+            [
+                'method'     => 'get',
+                'path'       => '/showCreateLeave',
+                'controller' => LeaveController::class,
+                'action'     => 'showCreateLeave',
+                'middleware' => [VerifySessionMiddleware::class]
+            ],
+            [
+                'method'     => 'post',
+                'path'       => '/createLeave',
+                'controller' => LeaveController::class,
+                'action'     => 'createLeave',
+                'middleware' => [VerifySessionMiddleware::class, VerifyCsrfMiddleware::class]
+            ],
+            [
+                'method'     => 'get',
+                'path'       => '/editLeave/{id}',
+                'controller' => LeaveController::class,
+                'action'     => 'editLeave',
+                'middleware' => [VerifySessionMiddleware::class]
+            ],
+            [
+                'method'     => 'post',
+                'path'       => '/updateLeave/{id}',
+                'controller' => LeaveController::class,
+                'action'     => 'updateLeave',
+                'middleware' => [VerifySessionMiddleware::class, VerifyCsrfMiddleware::class]
             ]
         ];
     }
