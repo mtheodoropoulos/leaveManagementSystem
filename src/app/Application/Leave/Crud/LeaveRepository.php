@@ -75,4 +75,9 @@ class LeaveRepository implements LeaveRepositoryInterface
             return false;
         }
     }
+
+    public function deleteLeave($id): int
+    {
+        return Capsule::table('leaves')->where('id', $id)->delete();
+    }
 }

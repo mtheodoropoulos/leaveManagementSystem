@@ -25,6 +25,16 @@ class UserService implements UserServiceInterface
         return $this->userRepository->getUserRole($user);
     }
 
+    public function getUserByEmail(string $email): ?stdClass
+    {
+        return $this->userRepository->getUserByEmail($email);
+    }
+
+    public function getUserWithEmployeeCode(int $userId): ?stdClass
+    {
+        return $this->userRepository->getUserWithEmployeeCode($userId);
+    }
+
     public function createUser(string $name, string $email, string $password, string $employeeCode, DateTime $nowDateTime, Role $roleName): int
     {
         return $this->userRepository->createUser($name, $email, $password, $employeeCode, $nowDateTime, $roleName);
@@ -46,10 +56,5 @@ class UserService implements UserServiceInterface
     public function listUsers(): array
     {
         return $this->userRepository->listUsers();
-    }
-
-    public function listLeaves(): array
-    {
-        return $this->userRepository->listLeaves();
     }
 }

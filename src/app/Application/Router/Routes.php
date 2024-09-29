@@ -124,6 +124,13 @@ class Routes
                 'controller' => LeaveController::class,
                 'action'     => 'updateLeave',
                 'middleware' => [VerifySessionMiddleware::class, VerifyCsrfMiddleware::class]
+            ],
+            [
+                'method'     => 'delete',
+                'path'       => '/deleteLeave/{id}',
+                'controller' => LeaveController::class,
+                'action'     => 'deleteLeave',
+                'middleware' => [VerifySessionMiddleware::class, VerifyCsrfMiddleware::class]
             ]
         ];
     }

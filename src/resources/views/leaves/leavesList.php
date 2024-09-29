@@ -94,6 +94,33 @@
             window.location.href = `/editLeave/${leaveId}`;
         });
     });
+
+    document.querySelectorAll('.deleteLeaveButton').forEach(button => {
+        button.addEventListener('click', function() {
+            const leaveId = this.getAttribute('data-id');
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            const formData = {
+                leaveId: leaveId,
+                csrfToken: csrfToken
+            };
+
+            axios.delete(`/deleteLeave/${leaveId}`, {
+                data: { csrfToken: document.querySelector('meta[name="csrf-token"]').getAttribute('content') }
+            })
+                .then(response => {
+                    window.location.reload();
+                    alert('Leave deleted successfully!');
+                })
+                .catch(error => {
+                    if (error.response && error.response.data && error.response.data.message) {
+                        alert('Error: ' + error.response.data.message);
+                    } else {
+                        alert('An unexpected error occurred.');
+                    }
+                });
+        });
+    });
 </script>
 </body>
 </html>

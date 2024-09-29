@@ -10,7 +10,6 @@ use App\Application\User\Services\Crud\UserService;
 use App\Application\Utils\CommonFunctionsUtils;
 use App\Application\View\View;
 use DateTime;
-use Illuminate\Database\Capsule\Manager as Capsule;
 use JetBrains\PhpStorm\NoReturn;
 use Random\RandomException;
 
@@ -21,13 +20,22 @@ class AuthController extends BaseController
     {
     }
 
+    /**
+     * @throws \JsonException
+     */
     public function showLogin(): void
     {
         $csrfToken             = $this->csrfToken();
         $_SESSION['csrfToken'] = $csrfToken;
 
         if (isset($_SESSION['userId'])) {
-            $user = Capsule::table('users')->where('id', $_SESSION['userId'])->first();
+            $user =  $this->userService->getUser($_SESSION['userId']);
+
+            if (!$user) {
+                http_response_code(400);
+                echo json_encode(['message' => 'User does not exist', 'status' => 400], JSON_THROW_ON_ERROR);
+            }
+
             $role =  $this->userService->getUserRole($user);
 
             if ($role && $role->name === "manager") {
@@ -81,8 +89,6 @@ class AuthController extends BaseController
         $userId = $this->userService->createUser($name, $email, $password, $sevenDigitNumber, $nowDateTime, $roleName);
 
         if ($userId) {
-            $_SESSION['userId'] = $userId;
-            $_SESSION['$email'] = $email;
             http_response_code(200);
             echo json_encode(['message' => 'Registration successful!', "status" => 200], JSON_THROW_ON_ERROR);
         } else {
@@ -101,7 +107,7 @@ class AuthController extends BaseController
         $email    = $payload['email'];
         $password = $payload['password'];
 
-        $user = Capsule::table('users')->where('email', $email)->first();
+        $user =  $this->userService->getUserByEmail($email);
 
         if ($user && password_verify($password, $user->password)) {
             $_SESSION['userId'] = $user->id;

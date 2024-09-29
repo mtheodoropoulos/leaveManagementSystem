@@ -35,25 +35,6 @@ class UserController extends BaseController
         echo $view->render();
     }
 
-    public function listLeaves(): void
-    {
-        $csrfToken             = $this->csrfToken();
-        $_SESSION['csrfToken'] = $csrfToken;
-
-        $loggedInUser     = $this->userService->getUser($_SESSION['userId']);
-        $loggedInUserName = $loggedInUser?->name;
-        $leaves           = $this->userService->listLeaves();
-
-        $view = new View('leaves/leavesList.php', [
-            'csrfToken'        => $csrfToken,
-            'heading'          => 'Leaves list',
-            'users'            => $leaves,
-            'loggedInUserName' => $loggedInUserName,
-        ]);
-
-        echo $view->render();
-    }
-
     public function showCreateUser(): void
     {
         $csrfToken             = $this->csrfToken();
@@ -92,11 +73,7 @@ class UserController extends BaseController
 
     public function editUser($id): void
     {
-        $user = Capsule::table('users')
-                       ->join('employees', 'users.id', '=', 'employees.userId')
-                       ->select('users.*', 'employees.employeeCode')
-                       ->where('users.id', $id)
-                       ->first();
+        $user = $this->userService->getUserWithEmployeeCode((int)$id);
 
         if ($user) {
             $csrfToken             = $this->csrfToken();
@@ -112,7 +89,7 @@ class UserController extends BaseController
             echo $view->render();
         } else {
             http_response_code(404);
-            echo json_encode(['message' => 'User not found', 'status' => 404]);
+            echo json_encode(['message' => 'User not found', 'status' => 404], JSON_THROW_ON_ERROR);
         }
     }
 

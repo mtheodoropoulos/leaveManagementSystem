@@ -37,4 +37,9 @@ readonly class LeaveService implements LeaveServiceInterface
     {
         return $this->leaveRepository->updateLeave($leaveId, $dateFrom, $dateTo, $reason, $nowDateTime);
     }
+
+    public function deleteLeave(int $id): int
+    {
+        return $this->leaveRepository->deleteLeave($id);
+    }
 }

@@ -112,4 +112,17 @@ class LeaveController extends BaseController
             echo json_encode(['message' => 'Failed to update user', 'status' => 400], JSON_THROW_ON_ERROR);
         }
     }
+
+    public function deleteLeave(int $id, array $payload): void
+    {
+        $result = $this->leaveService->deleteLeave($id);
+
+        if ($result) {
+            http_response_code(200);
+            echo json_encode(['message' => 'Leave deleted successfully', 'status' => 200], JSON_THROW_ON_ERROR);
+        } else {
+            http_response_code(404);
+            echo json_encode(['message' => 'Leave not found', 'status' => 404], JSON_THROW_ON_ERROR);
+        }
+    }
 }

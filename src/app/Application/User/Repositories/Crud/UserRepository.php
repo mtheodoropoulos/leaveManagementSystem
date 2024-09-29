@@ -21,6 +21,20 @@ class UserRepository implements UserRepositoryInterface
         return Capsule::table('users')->where('id', $userId)->first();
     }
 
+    public function getUserByEmail(string $email): ?stdClass
+    {
+        return  Capsule::table('users')->where('email', $email)->first();
+    }
+
+    public function getUserWithEmployeeCode(int $userId): ?stdClass
+    {
+        return Capsule::table('users')
+                       ->join('employees', 'users.id', '=', 'employees.userId')
+                       ->select('users.*', 'employees.employeeCode')
+                       ->where('users.id', $userId)
+                       ->first();
+    }
+
     public function getUserRole($user): ?stdClass
     {
         return Capsule::table('roles')
