@@ -97,7 +97,7 @@ class CustomRouterStrategy implements RouterStrategyInterface
                 // Filter out the named parameters from the regex matches
                 $params = array_filter($params, 'is_string', ARRAY_FILTER_USE_KEY);
 
-                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                if ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHOD'] === 'DELETE') {
                     if (!empty($params)) {
                         $arguments = ["payload" => $payload, ...$params];
                     } else {
@@ -119,7 +119,7 @@ class CustomRouterStrategy implements RouterStrategyInterface
 
     private function getPostPayload(): array
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHOD'] === 'DELETE') {
             if (isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false) {
                 $jsonPayload = file_get_contents('php://input');
 

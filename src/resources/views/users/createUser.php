@@ -57,7 +57,7 @@
             axios.post('/createUser', formData)
                 .then(response => {
                     alert('Create User successfully!');
-                    window.location.href = '/login';
+                    window.location.href = '/listUsers';
                 })
                 .catch(error => {
                     if (error) {

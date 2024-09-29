@@ -83,7 +83,7 @@ class Routes
                 'middleware' => [VerifySessionMiddleware::class]
             ],
             [
-                'method'     => 'post',
+                'method'     => 'delete',
                 'path'       => '/deleteUser/{id}',
                 'controller' => UserController::class,
                 'action'     => 'deleteUser',

@@ -102,7 +102,9 @@
                 csrfToken: csrfToken
             };
 
-            axios.post(`/deleteUser/${userId}`, formData)
+            axios.delete(`/deleteUser/${userId}`, {
+                data: { csrfToken: document.querySelector('meta[name="csrf-token"]').getAttribute('content') }
+            })
                 .then(response => {
                     alert('User deleted successfully!');
                     window.location.reload();

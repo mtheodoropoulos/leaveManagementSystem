@@ -26,6 +26,11 @@ class AuthController extends BaseController
         $csrfToken             = $this->csrfToken();
         $_SESSION['csrfToken'] = $csrfToken;
 
+        if ($_SESSION['userId']) {
+            header("Location: /listUsers");
+            exit();
+        }
+
         $view = new View('auth/login.php', [
             'csrfToken' => $csrfToken,
             'heading'   => 'Login',
