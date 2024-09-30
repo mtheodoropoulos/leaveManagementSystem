@@ -27,7 +27,7 @@ class MailgunEmailStrategy implements EmailStrategyInterface
             $this->mailer->Host = $_ENV['MAILGUN_SMTP_HOST'];
             $this->mailer->SMTPAuth = true;
             $this->mailer->Username   = $_ENV['MAILGUN_SMTP_USERNAME'];
-            $this->mailer->Password   = $_ENV['b99831ba7a1c661d3645025a7781e663-1b5736a5-c3fc828b'];
+            $this->mailer->Password   = $_ENV['MAILGUN_SMTP_PASSWORD'];
             $this->mailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $this->mailer->Port       = 587;
 
